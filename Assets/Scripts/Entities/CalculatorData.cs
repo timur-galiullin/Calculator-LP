@@ -10,7 +10,8 @@ namespace Calculator
         public long result;
         public bool hasFirstOperand;
         public bool hasSecondOperand;
-        public bool hasResult;  
+        public bool hasResult;
+        public string error;
         public CalculatorOperation operation;
         public CalculatorStage stage;
     }
