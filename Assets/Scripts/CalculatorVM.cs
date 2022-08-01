@@ -6,11 +6,13 @@ namespace Calculator
     public class CalculatorVM : MonoBehaviour
     {
         private ISaveGateway _saveGateway;
+        private IPremiumGateway _premiumGateway;
         private CalculatorCore _calculatorCore;
 
         private long? _firstOperand;
         private long? _secondOperand;
         private long? _result;
+        private string _error;
         private CalculatorOperation _operation;
         private CalculatorStage _stage;
 
@@ -20,6 +22,16 @@ namespace Calculator
             private set
             {
                 _firstOperand = value;
+                OnUpdateInput?.Invoke();
+            }
+        }
+
+        public string Error
+        {
+            get => _error;
+            private set
+            {
+                _error = value;
                 OnUpdateInput?.Invoke();
             }
         }
@@ -67,8 +79,6 @@ namespace Calculator
         public Action OnUpdateStage { get; set; }
         public Action OnUpdateInput { get; set; }
 
-        public Action OnDivideByZero { get; set; }
-
         public void SetFirstOperand(int operand)
         {
             FirstOperand = operand;
@@ -89,6 +99,7 @@ namespace Calculator
 
         public void Clear()
         {
+            Error = "";
             Stage = CalculatorStage.Start;
             FirstOperand = null;
             SecondOperand = null;
@@ -117,7 +128,7 @@ namespace Calculator
             if (SecondOperand.GetValueOrDefault() == 0 && Operation == CalculatorOperation.Divide)
             {
                 Result = 0;
-                OnDivideByZero?.Invoke();
+                _premiumGateway.ShowPremium(FirstOperand == 0);
             }
             else
             {
@@ -131,6 +142,13 @@ namespace Calculator
         {
             _saveGateway = new PlayerPrefsSaveGateway();
             _calculatorCore = new CalculatorCore();
+#if UNITY_ANDROID
+            _premiumGateway = new AndroidPremium();
+#else
+            _premiumGateway = new DefaultPremium();
+#endif
+            _premiumGateway.OnResult += s => Error = s;
+
             Clear();
             Load();
         }
@@ -151,7 +169,8 @@ namespace Calculator
                 result = Result.GetValueOrDefault(),
                 hasResult = Result.HasValue,
                 operation = Operation,
-                stage = Stage
+                stage = Stage,
+                error = Error
             };
             _saveGateway.Save(data);
         }
@@ -169,6 +188,7 @@ namespace Calculator
             Result = data.hasResult ? data.result : null;
             Operation = data.operation;
             Stage = data.stage;
+            Error = data.error;
         }
     }
 }

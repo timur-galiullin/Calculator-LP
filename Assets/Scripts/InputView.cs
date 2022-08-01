@@ -19,11 +19,6 @@ namespace Calculator
             { CalculatorOperation.Multiply, "X" }
         };
 
-        public void ShowManual(string result)
-        {
-            _field.text = result;
-        }
-
         private void Awake()
         {
             _field = GetComponent<TMP_InputField>();
@@ -43,6 +38,12 @@ namespace Calculator
 
         private void UpdateView()
         {
+            if (_vm.Error != "")
+            {
+                _field.text = _vm.Error;
+                return;
+            }
+
             var firstOperand = _vm.FirstOperand is null ? "" : _vm.FirstOperand.ToString();
             var operation = _vm.Operation == CalculatorOperation.None ? "" : _operationMatcher[_vm.Operation];
             var secondOperand = _vm.SecondOperand is null ? "" : _vm.SecondOperand.ToString();
