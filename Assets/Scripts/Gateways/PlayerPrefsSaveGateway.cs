@@ -2,11 +2,11 @@ using UnityEngine;
 
 namespace Calculator
 {
-    public class SaveService
+    public class PlayerPrefsSaveGateway : ISaveGateway
     {
         private const string KEY = "save_key";
 
-        public void Save(SaveData data)
+        public void Save(CalculatorData data)
         {
             PlayerPrefs.SetString(KEY, JsonUtility.ToJson(data));
             PlayerPrefs.Save();
@@ -14,6 +14,6 @@ namespace Calculator
 
         public bool HasSave() => PlayerPrefs.HasKey(KEY);
 
-        public SaveData Load() => JsonUtility.FromJson<SaveData>(PlayerPrefs.GetString(KEY));
+        public CalculatorData Load() => JsonUtility.FromJson<CalculatorData>(PlayerPrefs.GetString(KEY));
     }
 }

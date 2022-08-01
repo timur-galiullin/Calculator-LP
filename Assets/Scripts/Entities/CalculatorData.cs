@@ -3,7 +3,7 @@ using System;
 namespace Calculator
 {
     [Serializable]
-    public class SaveData
+    public class CalculatorData
     {
         public long firstOperand;
         public long secondOperand;

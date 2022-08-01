@@ -5,7 +5,7 @@ namespace Calculator
 {
     public class CalculatorVM : MonoBehaviour
     {
-        private SaveService _saveService;
+        private ISaveGateway _saveGateway;
         private CalculatorCore _calculatorCore;
 
         private long? _firstOperand;
@@ -123,12 +123,13 @@ namespace Calculator
             {
                 Result = _calculatorCore.Calculate(Operation, FirstOperand.GetValueOrDefault(), SecondOperand.GetValueOrDefault());
             }
+
             Stage = CalculatorStage.Clear;
         }
 
         private void Awake()
         {
-            _saveService = new SaveService();
+            _saveGateway = new PlayerPrefsSaveGateway();
             _calculatorCore = new CalculatorCore();
             Clear();
             Load();
@@ -141,7 +142,7 @@ namespace Calculator
 
         private void Save()
         {
-            var data = new SaveData
+            var data = new CalculatorData
             {
                 firstOperand = FirstOperand.GetValueOrDefault(),
                 hasFirstOperand = FirstOperand.HasValue,
@@ -152,17 +153,17 @@ namespace Calculator
                 operation = Operation,
                 stage = Stage
             };
-            _saveService.Save(data);
+            _saveGateway.Save(data);
         }
 
         private void Load()
         {
-            if (!_saveService.HasSave())
+            if (!_saveGateway.HasSave())
             {
                 return;
             }
 
-            var data = _saveService.Load();
+            var data = _saveGateway.Load();
             FirstOperand = data.hasFirstOperand ? data.firstOperand : null;
             SecondOperand = data.hasSecondOperand ? data.secondOperand : null;
             Result = data.hasResult ? data.result : null;
