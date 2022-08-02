@@ -8,7 +8,7 @@ namespace Calculator
 
         public void ShowPremium(bool isFirstOperandZero)
         {
-            OnResult?.Invoke("");
+            OnResult?.Invoke(string.Empty);
         }
     }
 }

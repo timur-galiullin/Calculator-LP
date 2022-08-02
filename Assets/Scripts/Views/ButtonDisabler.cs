@@ -9,7 +9,7 @@ namespace Calculator
     [RequireComponent(typeof(Button))]
     public class ButtonDisabler : MonoBehaviour
     {
-        [SerializeField] private CalculatorVM _vm;
+        [SerializeField] private CalculatorViewModel viewModel;
         [SerializeField] private List<CalculatorStage> _activeStages;
 
         private Button _button;
@@ -17,8 +17,6 @@ namespace Calculator
         private void Awake()
         {
             _button = GetComponent<Button>();
-
-            _vm.OnUpdateStage += UpdateView;
         }
 
         private void Start()
@@ -26,9 +24,14 @@ namespace Calculator
             UpdateView();
         }
 
-        private void OnDestroy()
+        private void OnEnable()
         {
-            _vm.OnUpdateStage -= UpdateView;
+            viewModel.OnUpdateData += UpdateView;
+        }
+
+        private void OnDisable()
+        {
+            viewModel.OnUpdateData -= UpdateView;
         }
 
         private void UpdateView()
@@ -36,7 +39,7 @@ namespace Calculator
             _button.interactable = false;
             foreach (var stage in _activeStages)
             {
-                if (stage == _vm.Stage)
+                if (stage == viewModel.Data.stage)
                 {
                     _button.interactable = true;
                     break;

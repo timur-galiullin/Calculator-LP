@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -7,7 +8,7 @@ namespace Calculator
     [RequireComponent(typeof(TMP_InputField))]
     public class InputView : MonoBehaviour
     {
-        [SerializeField] private CalculatorVM _vm;
+        [SerializeField] private CalculatorViewModel viewModel;
 
         private TMP_InputField _field;
 
@@ -22,8 +23,16 @@ namespace Calculator
         private void Awake()
         {
             _field = GetComponent<TMP_InputField>();
+        }
 
-            _vm.OnUpdateInput += UpdateView;
+        private void OnEnable()
+        {
+            viewModel.OnUpdateData += UpdateView;
+        }
+
+        private void OnDisable()
+        {
+            viewModel.OnUpdateData -= UpdateView;
         }
 
         private void Start()
@@ -31,23 +40,18 @@ namespace Calculator
             UpdateView();
         }
 
-        private void OnDestroy()
-        {
-            _vm.OnUpdateInput -= UpdateView;
-        }
-
         private void UpdateView()
         {
-            if (_vm.Error != "")
+            if (!string.IsNullOrEmpty(viewModel.Data.error))
             {
-                _field.text = _vm.Error;
+                _field.text = viewModel.Data.error;
                 return;
             }
 
-            var firstOperand = _vm.FirstOperand is null ? "" : _vm.FirstOperand.ToString();
-            var operation = _vm.Operation == CalculatorOperation.None ? "" : _operationMatcher[_vm.Operation];
-            var secondOperand = _vm.SecondOperand is null ? "" : _vm.SecondOperand.ToString();
-            var result = _vm.Result is null ? "" : "=" + _vm.Result;
+            var firstOperand = viewModel.Data.hasFirstOperand ? viewModel.Data.firstOperand.ToString() : "";
+            var operation = viewModel.Data.operation == CalculatorOperation.None ? "" : _operationMatcher[viewModel.Data.operation];
+            var secondOperand = viewModel.Data.hasSecondOperand ? viewModel.Data.secondOperand.ToString() : "";
+            var result = viewModel.Data.hasResult ? "=" + viewModel.Data.result : "";
             _field.text = firstOperand + operation + secondOperand + result;
         }
     }
