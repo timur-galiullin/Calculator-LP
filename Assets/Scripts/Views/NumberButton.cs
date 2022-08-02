@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace Calculator
@@ -9,7 +8,7 @@ namespace Calculator
 
         protected override void Do()
         {
-            switch (_vm.Stage)
+            switch (viewModel.Data.stage)
             {
                 case CalculatorStage.Start:
                 case CalculatorStage.FirstOperand:
@@ -24,28 +23,28 @@ namespace Calculator
 
         private void SetFirstOperand()
         {
-            if (_vm.FirstOperand is null)
+            if (!viewModel.Data.hasFirstOperand)
             {
-                _vm.SetFirstOperand(_number);
+                viewModel.SetFirstOperand(_number);
             }
             else
             {
-                if (int.TryParse(_vm.FirstOperand.ToString() + _number, out int newNumber))
+                if (int.TryParse(viewModel.Data.firstOperand.ToString() + _number, out var newNumber))
                 {
-                    _vm.SetFirstOperand(newNumber);
+                    viewModel.SetFirstOperand(newNumber);
                 }
             }
         }
 
         private void SetSecondOperand()
         {
-            if (_vm.SecondOperand is null)
+            if (!viewModel.Data.hasSecondOperand)
             {
-                _vm.SetSecondOperand(_number);
+                viewModel.SetSecondOperand(_number);
             }
-            else if (int.TryParse(_vm.SecondOperand.ToString() + _number, out int newNumber))
+            else if (int.TryParse(viewModel.Data.secondOperand.ToString() + _number, out var newNumber))
             {
-                _vm.SetSecondOperand(newNumber);
+                viewModel.SetSecondOperand(newNumber);
             }
         }
     }

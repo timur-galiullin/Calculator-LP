@@ -4,7 +4,7 @@ namespace Calculator
     {
         protected override void Do()
         {
-            _vm.SetOperation(CalculatorOperation.Multiply);
+            viewModel.SetOperation(CalculatorOperation.Multiply);
         }
     }
 }

@@ -1,10 +1,10 @@
 namespace Calculator
 {
-    public class GetResultButton : BaseButton
+    public class ConfirmButton : BaseButton
     {
         protected override void Do()
         {
-            _vm.GetResult();
+            viewModel.Confirm();
         }
     }
 }

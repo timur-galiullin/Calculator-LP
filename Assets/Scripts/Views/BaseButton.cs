@@ -6,7 +6,7 @@ namespace Calculator
     [RequireComponent(typeof(Button))]
     public class BaseButton : MonoBehaviour
     {
-        [SerializeField] protected CalculatorVM _vm;
+        [SerializeField] protected CalculatorViewModel viewModel;
 
         protected Button _button;
 
